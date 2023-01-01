@@ -17,6 +17,10 @@ public class Skills : MonoBehaviour
     void Update()
     {
         Dash();
+        if (Input.GetKeyDown(KeyCode.V))
+        {
+            StartCoroutine(TimeStopper());
+        }
     }
 
     public void Dash()
@@ -26,9 +30,20 @@ public class Skills : MonoBehaviour
             //float cooldown = dashCooldown
             Vector2 difference = cameraMain.ScreenToWorldPoint(Input.mousePosition) - transform.position;
             difference.Normalize();
-            rb.AddForce(difference*DashForce);
+            rb.AddForce(difference * DashForce);
             //skillCooldown = cooldown; 
         }
-        
+    }
+    
+    public IEnumerator TimeStopper()
+    {
+            Time.timeScale = 0.5f;
+            Debug.Log("StartCourutine");
+
+            yield return new WaitForSeconds(2f);
+            
+            Time.timeScale = 1f;
+            Debug.Log("EndCourutine");
+            
     }
 }
