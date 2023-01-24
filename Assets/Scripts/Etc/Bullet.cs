@@ -9,9 +9,21 @@ public class Bullet : MonoBehaviour
     public float LifeTime = 10f;
     public float Damage = 1f;
 
+    private Rigidbody2D rb;
+    private void Start()
+    {
+        rb = GetComponent<Rigidbody2D>();
+
+        Camera cameraMain = Camera.main;
+        
+        Vector2 difference = cameraMain.ScreenToWorldPoint(Input.mousePosition) - transform.position;
+        difference.Normalize();
+        rb.AddForce(difference * Speed*100);
+    }
+
     void FixedUpdate()
     {
-        transform.Translate(Vector2.right * Speed * Time.deltaTime);
+        //transform.Translate(Vector2.right * Speed * Time.deltaTime);
         LifeTime -= Time.deltaTime;
         if (LifeTime <= 0)
         {
@@ -26,8 +38,7 @@ public class Bullet : MonoBehaviour
             Obj.collider.GetComponent<BasedEnemy>().TakeDamage(Damage);
             Destroy(gameObject);
         }
-
-        Debug.Log("Touch");
+        
         if (Obj.collider.CompareTag("Wall"))
         {
             Destroy(gameObject);

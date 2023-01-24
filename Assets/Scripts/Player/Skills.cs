@@ -4,16 +4,20 @@ using UnityEngine;
 
 public class Skills : MonoBehaviour
 {
-    public float DashForce = 2000f;
     private Rigidbody2D rb;
     private Camera cameraMain;
+
+    [SerializeField] private float dashForce = 2000f;
+    private float dashEnergyCost = 10f;
+    private bool isDashActive = false;
+    
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         cameraMain = Camera.main;
+        LvlUpList.AddSomething1 += AddSkill;
     }
-
-    // Update is called once per frame
+    
     void Update()
     {
         Dash();
@@ -25,16 +29,22 @@ public class Skills : MonoBehaviour
 
     public void Dash()
     {
-        if (Input.GetKeyDown(KeyCode.Z))
+        if (Input.GetKeyDown(KeyCode.Z)&&isDashActive)
         {
-            //float cooldown = dashCooldown
-            Vector2 difference = cameraMain.ScreenToWorldPoint(Input.mousePosition) - transform.position;
-            difference.Normalize();
-            rb.AddForce(difference * DashForce);
-            //skillCooldown = cooldown; 
+            if (gameObject.GetComponent<StatsComponent>().Energy >= dashEnergyCost)
+            {
+                Vector2 difference = cameraMain.ScreenToWorldPoint(Input.mousePosition) - transform.position;
+                difference.Normalize();
+                rb.AddForce(difference * dashForce);
+                gameObject.GetComponent<StatsComponent>().MinusEnergy(dashEnergyCost);
+            }
         }
     }
-    
+
+    public void DashActivate()
+    {
+        isDashActive = true;
+    }
     public IEnumerator TimeStopper()
     {
             Time.timeScale = 0.5f;
@@ -45,5 +55,13 @@ public class Skills : MonoBehaviour
             Time.timeScale = 1f;
             Debug.Log("EndCourutine");
             
+    }
+
+    void AddSkill(int a)
+    {
+        if (a == 3)
+        {
+            isDashActive = true;
+        }
     }
 }

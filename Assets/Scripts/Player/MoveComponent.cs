@@ -6,7 +6,7 @@ public class MoveComponent : MonoBehaviour
 {
     public float Speed;//current speed
     
-    private float baseSpeed;
+    public float baseSpeed;
     private float runSpeed;
     private float speedAccleretion=2.0f;
     private float staminaRunConsume=0.5f;
@@ -14,6 +14,9 @@ public class MoveComponent : MonoBehaviour
     private Rigidbody2D rb;
     private Camera cameraMain;
     private float offset = 90f;
+
+    [SerializeField]private float enderanceStacked=0f;
+    private float enduranceToPlus1 = 100f;
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -34,6 +37,16 @@ public class MoveComponent : MonoBehaviour
         direct.y = Input.GetAxis("Vertical");
         
         rb.AddForce(direct*Speed);
+        if (direct != Vector2.zero)
+        {
+            enderanceStacked += Speed * Time.deltaTime;
+        }
+
+        if (enderanceStacked >= enduranceToPlus1)
+        {
+            gameObject.GetComponent<StatsComponent>().AddEndurance(1);
+            enderanceStacked = 0f;
+        }
 
         if (Input.GetKey(KeyCode.X)&&GetComponent<StatsComponent>().Stamina>0)
         {
@@ -44,7 +57,7 @@ public class MoveComponent : MonoBehaviour
         {
             if (Speed > baseSpeed)
             {
-                Speed /= 2;
+                Speed = baseSpeed;
             }
         }
     }
